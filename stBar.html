@@ -83,10 +83,10 @@
         var sFreshman = d3.sum(freshman);
         var total = [sSenior, sJunior, sSophmore, sFreshman];
         var biggestClass = d3.max(total);
-        var m = height;
-        var n = height;
-        var o= height;
-        var p = height;
+        var m = 0;
+        var n = 0;
+        var o= 0;
+        var p = 0;
 
         console.log(total);
 
@@ -105,9 +105,14 @@
       .attr("x", 0 )
       .attr("y", function(d) { return yScale(d); })
       .attr("height", function(d) { return height - yScale(d); })
-      .attr("width", barWidth-1)
+      .attr("transform", function(d){
+          return "translate(0, -" + m +")";
+          m = m + yScale(d);
+            })
+      .attr("width", barWidth-2)
       .attr("fill", function(d) {
-        return "rgb(0, 0, " + (d * 10) + ")";});
+        return "rgb(0, 0, " + (d * 10) + ")";})
+        ;
 
     svg.selectAll(".sophbar")
       .data(sophmore)
@@ -116,9 +121,9 @@
       .attr("x", barWidth )
       .attr("y", function(d) { return yScale(d); })
       .attr("height", function(d) { return height - yScale(d); })
-      .attr("width", barWidth-1)
+      .attr("width", barWidth-2)
       .attr("fill", function(d) {
-        return "rgb(0, 0, " + (d * 10) + ")";});
+        return "rgb(0, 0, " + (d * 100) + ")";});
 
     svg.selectAll(".jrbar")
       .data(junior)
@@ -127,9 +132,9 @@
       .attr("x", 2*barWidth )
       .attr("y", function(d) { return yScale(d); })
       .attr("height", function(d) { return height - yScale(d); })
-      .attr("width", barWidth-1)
+      .attr("width", barWidth-2)
       .attr("fill", function(d) {
-      return "rgb(0, 0, " + (d * 10) + ")";});
+      return "rgb(0, 0, " + (d * 100) + ")";});
 
     svg.selectAll(".srbar")
       .data(senior)
@@ -138,9 +143,9 @@
       .attr("x", 3*barWidth )
       .attr("y", function(d) { return yScale(d); })
       .attr("height", function(d) { return height - yScale(d); })
-      .attr("width", barWidth-1)
+      .attr("width", barWidth-2)
       .attr("fill", function(d) {
-      return "rgb(0, 0, " + (d * 10) + ")";});
+      return "rgb(0, 0, " + (d * 100) + ")";});
 
     /*  var bar=  svg.selectAll("g")
           .data(freshman)
@@ -181,6 +186,10 @@
             .attr("transform", "rotate(-90)")
       });
 
+
+      /*The following references were used in creating this file http://proquestcombo.safaribooksonline.com.ezproxy.lib.purdue.edu/book/web-design-and-development/9781449340223
+      http://bost.ocks.org/mike/bar/3/
+      http://bost.ocks.org/mike/bar/2/*/
       </script>
   </body>
 </html>
