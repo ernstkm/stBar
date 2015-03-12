@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+      <meta charset="utf-8">
+      <title>Katie's Stacked Bar Chart</title>
+      <script type="text/javascript" src="d3/d3.js"></script>
+      <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+      <style type="text/css">
+      body{
+        background-color:white;
+      }
+      .chart1{
+        fill:darkgrey;
+        font:10px sans-serif;
+        text-anchor: middle;
+      }
+      h2,h3, p, h4, h5{
+        font-family:Helvetica;
+        color:darkgrey;
+        }
+      p{
+        font-size:10px;
+      }
+      .axis path, .axis line{
+        fill: none;
+        stroke:darkgrey;
+        shape-rendering:crispEdges;
+      }
+
+      </style>
+  </head>
+  <body>
+
+    <svg class="chart1">
+      </svg>
+
+    <p> Author: Katie Ernst</p>
+    <p> Data Source: <a href="https://hivelab.org/static/exam1.json">HIVE Lab: Number of IE students in different years for five universities</a></p>
+
+      <script type="text/javascript">
+/*START SCRIPT*/
+/*ESTABLISH CANVAS BOUNDS*/
+
+      var barPadding = 1;
+      var margin = {top:5, right: 5, bottom:100, left:40};
+      var width = 200 - margin.left - margin.right;
+      var height = 400 - margin.top - margin.bottom;
+
+/*DECLARE SCALES*/
+      var xScale = d3.scale.ordinal()
+        .domain(["Freshman", "Sophomore", "Junior", "Senior"])
+        .rangeRoundBands([0, width]);
+      var yScale = d3.scale.linear()
+        .range([height,0]);
+
+/*DECLARE AXIS*/
+      var xAxis = d3.svg.axis()
+        .scale(xScale)
+        .orient("bottom");
+
+      var yAxis = d3.svg.axis()
+        .scale(yScale)
+        .orient("left");
+
+/*INIIATE */
+      var svg = d3.select("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+      d3.json("exam1.json", function(error, data){
+        console.log(data);
+        var senior = [data[3]["University A"], data[3]["University B"], data[3]["University C"], data[3]["University D"], data[3]["University E"]];
+          console.log(senior);
+        var junior = [data[2]["University A"], data[2]["University B"], data[2]["University C"], data[2]["University D"], data[2]["University E"]];
+        var sophmore = [data[1]["University A"], data[1]["University B"], data[1]["University C"], data[1]["University D"], data[1]["University E"]];
+        var freshman = [data[0]["University A"], data[0]["University B"], data[0]["University C"], data[0]["University D"], data[0]["University E"]];
+        var sSenior = d3.sum(senior);
+        var sJunior = d3.sum(junior);
+        var sSophmore = d3.sum(sophmore);
+        var sFreshman = d3.sum(freshman);
+        var total = [sSenior, sJunior, sSophmore, sFreshman];
+        var biggestClass = d3.max(total);
+        var m = height;
+        var n = height;
+        var o= height;
+        var p = height;
+
+        console.log(total);
+
+          console.log(sSenior);
+
+        yScale.domain([0, d3.max(total)]);
+        var barWidth = width / (total.length);
+          console.log(barWidth);
+
+
+    /*STARTS CREATING BARS*/
+    svg.selectAll(".freshmanbar")
+      .data(freshman)
+      .enter().append("rect")
+      .attr("class", "freshmanbar")
+      .attr("x", 0 )
+      .attr("y", function(d) { return yScale(d); })
+      .attr("height", function(d) { return height - yScale(d); })
+      .attr("width", barWidth-1)
+      .attr("fill", function(d) {
+        return "rgb(0, 0, " + (d * 10) + ")";});
+
+    svg.selectAll(".sophbar")
+      .data(sophmore)
+      .enter().append("rect")
+      .attr("class", "sophbar")
+      .attr("x", barWidth )
+      .attr("y", function(d) { return yScale(d); })
+      .attr("height", function(d) { return height - yScale(d); })
+      .attr("width", barWidth-1)
+      .attr("fill", function(d) {
+        return "rgb(0, 0, " + (d * 10) + ")";});
+
+    svg.selectAll(".jrbar")
+      .data(junior)
+      .enter().append("rect")
+      .attr("class", "jrbar")
+      .attr("x", 2*barWidth )
+      .attr("y", function(d) { return yScale(d); })
+      .attr("height", function(d) { return height - yScale(d); })
+      .attr("width", barWidth-1)
+      .attr("fill", function(d) {
+      return "rgb(0, 0, " + (d * 10) + ")";});
+
+    svg.selectAll(".srbar")
+      .data(senior)
+      .enter().append("rect")
+      .attr("class", "srbar")
+      .attr("x", 3*barWidth )
+      .attr("y", function(d) { return yScale(d); })
+      .attr("height", function(d) { return height - yScale(d); })
+      .attr("width", barWidth-1)
+      .attr("fill", function(d) {
+      return "rgb(0, 0, " + (d * 10) + ")";});
+
+    /*  var bar=  svg.selectAll("g")
+          .data(freshman)
+          .enter()
+          .append("g")
+/*          .attr("transform", function(d,i){return "translate(" + i * barWidth +",0)";});*/
+
+/*        bar.append("rect")
+          .attr("y", function(d) { return yScale(d);})
+          .attr("height", function(d) {return height - yScale(d);})
+          .attr("width", barWidth -1)
+          .attr("class", "senior")
+          .attr("fill", "darkgrey")
+          .attr("transform", function(d,i){return "translate(0," + yScale(d) +")";});
+
+       bar.append("text")
+            .attr("x", barWidth/2)
+            .attr("y",
+              function(d) {
+              return y(d.totHrs)+3;})
+            .attr("dy", ".75em")
+            .attr("fill", "none")
+            .text(function(d) {return d.Country;});*/
+
+          svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+          svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height +")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-1em")
+            .attr("dy", "-1em")
+            .attr("fill", "darkgrey")
+            .attr("transform", "rotate(-90)")
+      });
+
+      </script>
+  </body>
+</html>
